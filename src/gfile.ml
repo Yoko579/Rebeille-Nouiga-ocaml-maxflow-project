@@ -110,4 +110,5 @@ let from_file path =
   let final_graph = loop empty_graph in
   
   close_in infile ;
-  
+
+  final_graph
