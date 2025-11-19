@@ -110,7 +110,4 @@ let from_file path =
   let final_graph = loop empty_graph in
   
   close_in infile ;
-
-  let () = Printf.printf "Graph loaded from %s : %d nodes, %d edges.\n%!" path (n_size final_graph) (e_size final_graph) in
-  final_graph
   
