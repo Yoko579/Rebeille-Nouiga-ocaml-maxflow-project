@@ -1,5 +1,5 @@
 open Gfile
-open Tools
+open Tools 
     
 let () =
 
@@ -30,25 +30,34 @@ let () =
   let graph = from_file infile in
   
   (* __________TESTS __________ *)
-
-  (* Test clone_nodes *)
-  let cloned_graph = clone_nodes graph in
-  Printf.printf "Cloned graph created.\n";
-
+  
+  (* Test gmap and implicitly clone_nodes *)
+  let graphe_test_gmap = gmap graph (fun x -> x ^ "a") in
+  Printf.printf "All arc are concatenate with 'a'.\n";
+  
+  (* Test export *)
+  export graphe_test_gmap "graphe_test_gmap.dot";
+  Printf.printf "Graph exported to graphe_test_gmap.dot\n";
+  
   (* Test add_arc *)
-  let graph_with_arc = add_arc cloned_graph 1 2 10 in
+  let graph_test_add_arc = add_arc (clone_nodes graph) 1 2 10 in
   Printf.printf "Arc 1 -> 2 with label 10 added.\n";
 
-  (* Test gmap *)
-  let doubled_graph = gmap graph_with_arc (fun arc -> {arc with lbl = arc.lbl * 2}) in
-  Printf.printf "All arc labels doubled.\n";
-
-  (* Test export *)
-  export doubled_graph "doubled_graph.dot";
-  Printf.printf "Graph exported to doubled_graph.dot\n";
+  let graph_test_export_add_arc = gmap graph_test_add_arc (string_of_int) in
+  export graph_test_export_add_arc "graph_test_export_add_arc.dot";
 
   (* Rewrite the graph that has been read. *)
-  let () = write_file outfile graph_test in
+  let () = write_file outfile graph in
 
   ()
 
+  
+
+
+(*
+Commandes terminal:
+
+dot -Tsvg graphe_test_gmap.dot > sortie.svg
+
+./ftest.exe graphs/graph1.txt 0 2 toto.txt
+*)
