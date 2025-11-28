@@ -112,3 +112,11 @@ let from_file path =
   close_in infile ;
 
   final_graph
+
+(* Writes a string graph in dot format (graphviz format). *)
+let export gr file_name =
+  let out_channel = open_out file_name in
+  Printf.fprintf out_channel "digraph G {\n";
+  e_iter gr (fun arc -> Printf.fprintf out_channel "%d -> %d [label = \"%d\"];\n" arc.src arc.tgt arc.lbl);
+  Printf.fprintf out_channel "}\n";
+  close_out out_channel;;

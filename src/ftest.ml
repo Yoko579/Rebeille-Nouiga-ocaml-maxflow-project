@@ -1,5 +1,5 @@
 open Gfile
-(*open tools*)
+open Tools
     
 let () =
 
@@ -28,8 +28,24 @@ let () =
 
   (* Open file *)
   let graph = from_file infile in
+  
+  (* __________TESTS __________ *)
 
-  let graph_test = clone_nodes graph in
+  (* Test clone_nodes *)
+  let cloned_graph = clone_nodes graph in
+  Printf.printf "Cloned graph created.\n";
+
+  (* Test add_arc *)
+  let graph_with_arc = add_arc cloned_graph 1 2 10 in
+  Printf.printf "Arc 1 -> 2 with label 10 added.\n";
+
+  (* Test gmap *)
+  let doubled_graph = gmap graph_with_arc (fun arc -> {arc with lbl = arc.lbl * 2}) in
+  Printf.printf "All arc labels doubled.\n";
+
+  (* Test export *)
+  export doubled_graph "doubled_graph.dot";
+  Printf.printf "Graph exported to doubled_graph.dot\n";
 
   (* Rewrite the graph that has been read. *)
   let () = write_file outfile graph_test in
