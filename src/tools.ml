@@ -1,4 +1,3 @@
-(* Yes, we have to repeat open Graph. *)
 open Graph
 
 (* Returns a new graph having the same nodes than gr, but no arc. *)
@@ -16,4 +15,3 @@ let add_arc g id1 id2 n =
     match find_arc g id1 id2 with
     | None -> new_arc g {src = id1; tgt = id2; lbl = n}
     | Some arc -> new_arc g {src = arc.src; tgt = arc.tgt; lbl = arc.lbl + n}
-    

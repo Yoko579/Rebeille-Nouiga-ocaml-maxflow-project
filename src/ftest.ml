@@ -1,5 +1,6 @@
 open Gfile
 open Tools 
+open Fulkerson
     
 let () =
 
@@ -46,6 +47,10 @@ let () =
   let graph_test_export_add_arc = (gmap graph_test_add_arc (string_of_int)) in
   export graph_test_export_add_arc "graph_test_export_add_arc.dot";
 
+  (*Test find_path*)
+  let path_test = find_path graph [] 0 5;
+  path2s path_test;
+
   (* Rewrite the graph that has been read. *)
   let () = write_file outfile graph in
 
@@ -57,7 +62,11 @@ let () =
 (*
 Commandes terminal:
 
+Convert graph to schema:
 dot -Tsvg graphe_test_gmap.dot > sortie.svg
 
 ./ftest.exe graphs/graph1.txt 0 2 output_graph.txt
+
+To activate debugging:
+export OCAMLRUNPARAM="b"
 *)
