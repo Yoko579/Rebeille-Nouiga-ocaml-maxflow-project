@@ -40,10 +40,10 @@ let () =
   Printf.printf "Graph exported to graphe_test_gmap.dot\n";
   
   (* Test add_arc *)
-  let graph_test_add_arc = add_arc (clone_nodes graph) 1 2 10 in
+  let graph_test_add_arc = add_arc (gmap graph (int_of_string)) 1 2 10 in
   Printf.printf "Arc 1 -> 2 with label 10 added.\n";
 
-  let graph_test_export_add_arc = gmap graph_test_add_arc (string_of_int) in
+  let graph_test_export_add_arc = (gmap graph_test_add_arc (string_of_int)) in
   export graph_test_export_add_arc "graph_test_export_add_arc.dot";
 
   (* Rewrite the graph that has been read. *)
@@ -59,5 +59,5 @@ Commandes terminal:
 
 dot -Tsvg graphe_test_gmap.dot > sortie.svg
 
-./ftest.exe graphs/graph1.txt 0 2 toto.txt
+./ftest.exe graphs/graph1.txt 0 2 output_graph.txt
 *)
