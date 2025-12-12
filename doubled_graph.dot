@@ -1,0 +1,12 @@
+digraph G {
+0 -> 2 [label = "8a"];
+0 -> 3 [label = "10a"];
+0 -> 1 [label = "7a"];
+2 -> 4 [label = "12a"];
+3 -> 4 [label = "5a"];
+3 -> 2 [label = "2a"];
+3 -> 1 [label = "11a"];
+1 -> 4 [label = "1a"];
+1 -> 5 [label = "21a"];
+4 -> 5 [label = "14a"];
+}

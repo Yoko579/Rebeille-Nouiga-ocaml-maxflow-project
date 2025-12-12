@@ -48,8 +48,8 @@ let () =
   export graph_test_export_add_arc "graph_test_export_add_arc.dot";
 
   (*Test find_path*)
-  let path_test = find_path graph [] 0 5;
-  path2s path_test;
+  let path_test = find_arc_path (gmap graph (int_of_string)) [] 0 5 in
+  Printf.printf "%s\n%!" (path2s (find_node_path path_test));
 
   (* Rewrite the graph that has been read. *)
   let () = write_file outfile graph in

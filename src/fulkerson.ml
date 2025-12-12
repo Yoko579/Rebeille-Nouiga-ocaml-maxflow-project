@@ -16,7 +16,7 @@ let rec is_id_in_list l id = match l with
 
 let rec find_next_id gr forbidden actual_id id_list = match (out_arcs gr actual_id) with
   | [] -> []
-  | x::rest -> if (is_id_in_list forbidden x) then find_next_id gr forbidden actual_id rest else [x]
+  | x::rest -> if (is_id_in_list forbidden x) then find_next_id gr forbidden actual_id rest else [x] (*le rest n'est pas prit en compte dans la fct, on fait une boucle sur la meme chose x sera toujours là*)
 
 let remove_last l = match List.rev l with
   | [] -> []
@@ -24,25 +24,39 @@ let remove_last l = match List.rev l with
 
 let retrieve_last_id l = match List.rev l with
   | [] -> raise Not_found
-  | x::rest -> x
+  | x::_ -> x
+
+(* let path2s path = match path with
+  | None -> "No path."
+  | Some path_list -> let string_path = List.map string_of_int path_list in
+    String.concat ", " string_path *)
 
 let path2s path = match path with
   | None -> "No path."
-  | Some path_list -> let string_path = List.map string_of_int path_list in
-    String.concat ", " string_path
+  | Some path_list -> match path_list with
+    | [] -> "Already in destination."
+    | x::rest -> let string_path = List.map (fun id -> string_of_int id) (x::rest) in
+      String.concat " -> " string_path
 
-let find_path gr forbidden id1 id2 =
+let find_arc_path gr forbidden id1 id2 =
   match (out_arcs gr id1) with
     | [] -> None
     | _ ->
-      let rec aux graph result forbidden actual_id dest_id =
-        if is_id_in_list (out_arcs gr actual_id) dest_id then Some (result @ [dest_id])
-        else match find_next_id gr forbidden actual_id (out_arcs gr actual_id) with
+      let rec aux result forbidden actual_id =
+        match find_next_id gr forbidden actual_id (out_arcs gr actual_id) with
+          | x::_ -> if x.tgt==id2 then Some (result @ [x])
+                    else aux (result @ [x]) (forbidden @ [x]) x.tgt
           | [] -> match remove_last result with
                 | [] -> None
-                | _ -> aux graph updated_list (forbidden @ [actual_id]) (retrieve_last_id result) dest_id
-          | x::rest -> aux graph (result @ [x]) (forbidden @ [actual_id]) x dest_id
-        in aux gr [id1] forbidden id1 id2
+                | updated_list -> aux updated_list forbidden (retrieve_last_id result).tgt 
+          
+        in aux [] forbidden id1
+(* ajouter l element en debut de list *)
+(* ne pas faire le travail d'une fonction récursive et utiliser le resultat de: aux (result @ [x]) (forbidden @ [x]) x.tgt, si on trouve rien on appelle aux result (forbidden @ [x]) ?.tgt sinon ?*)
 
-    (*faut ajouter le cas où on renvoit None
-    réfléchir au cas de terminaison*)
+let find_node_path arc_path =
+  match arc_path with
+    | None -> None
+    | Some qqchose -> match qqchose with
+        | [] -> None
+        | x::_ -> Some (x.src :: (List.map (fun arc -> arc.tgt) qqchose))
