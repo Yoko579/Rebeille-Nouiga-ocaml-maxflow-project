@@ -1,3 +1,5 @@
+open Graph
+
 (* A path is a list of nodes. *)
 type path = id list
 
@@ -36,7 +38,9 @@ let find_path gr forbidden id1 id2 =
       let rec aux graph result forbidden actual_id dest_id =
         if is_id_in_list (out_arcs gr actual_id) dest_id then Some (result @ [dest_id])
         else match find_next_id gr forbidden actual_id (out_arcs gr actual_id) with
-          | [] -> aux graph (remove_last result) (forbidden @ [actual_id]) (retrieve_last_id result) dest_id
+          | [] -> match remove_last result with
+                | [] -> None
+                | _ -> aux graph updated_list (forbidden @ [actual_id]) (retrieve_last_id result) dest_id
           | x::rest -> aux graph (result @ [x]) (forbidden @ [actual_id]) x dest_id
         in aux gr [id1] forbidden id1 id2
 
