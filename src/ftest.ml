@@ -1,6 +1,7 @@
 open Gfile
 open Tools 
 open Fulkerson
+
     
 let () =
 
@@ -9,10 +10,10 @@ let () =
     begin
       Printf.printf
         "\n ✻  Usage: %s infile source sink outfile\n\n%s%!" Sys.argv.(0)
-        ("    🟄  infile  : input file containing a graph\n" ^
-         "    🟄  source  : identifier of the source vertex (used by the ford-fulkerson algorithm)\n" ^
-         "    🟄  sink    : identifier of the sink vertex (ditto)\n" ^
-         "    🟄  outfile : output file in which the result should be written.\n\n") ;
+        ("      infile  : input file containing a graph\n" ^
+         "      source  : identifier of the source vertex (used by the ford-fulkerson algorithm)\n" ^
+         "      sink    : identifier of the sink vertex (ditto)\n" ^
+         "      outfile : output file in which the result should be written.\n\n") ;
       exit 0
     end ;
 
@@ -29,11 +30,12 @@ let () =
 
   (* Open file *)
   let graph = from_file infile in
+
   
   (* __________TESTS __________ *)
   
   (* Test gmap and implicitly clone_nodes *)
-  let graphe_test_gmap = gmap graph (fun x -> x ^ "a") in
+  let graphe_test_gmap = gmap graph (fun x -> x) in
   Printf.printf "All arc are concatenate with 'a'.\n";
   
   (* Test export *)
@@ -48,9 +50,20 @@ let () =
   export graph_test_export_add_arc "graph_test_export_add_arc.dot";
 
   (*Test find_path*)
-  let path_test = find_arc_path (gmap graph (int_of_string)) [] 0 5 in
+  let path_test = find_arc_path (gmap graph (int_of_string)) [] 0 10 in
   Printf.printf "%s\n%!" (path2s (find_node_path path_test));
 
+
+  let all_paths =find_all_node_paths(gmap graph (int_of_string)) 0 10 in 
+  Printf.printf "%d chemin(s) trouvé(s)\n%!" (List.length all_paths);
+
+  List.iter (fun p -> Printf.printf "- %s\n%!" (path2s(Some p))) all_paths;
+  (* Rewrite the graph that has been read. *)
+
+  let all_paths_with_min = find_min_paths(gmap graph (int_of_string)) 0 10 in 
+  Printf.printf "%d chemin(s) trouvé(s)\n%!" (List.length all_paths_with_min);
+
+  List.iter (fun (p, f) -> Printf.printf "- %s pour valeur %d \n%!" (path2s(Some p)) f) all_paths_with_min;
   (* Rewrite the graph that has been read. *)
   let () = write_file outfile graph in
 
