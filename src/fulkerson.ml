@@ -14,7 +14,7 @@ let rec is_id_in_list l id = match l with
   | [] -> false
   | x::rest -> if x = id then true else is_id_in_list rest id
 
-let rec find_next_id gr forbidden actual_id id_list = match (out_arcs gr actual_id) with
+let rec find_next_id gr forbidden actual_id id_list = match id_list with
   | [] -> []
   | x::rest -> if (is_id_in_list forbidden x) then find_next_id gr forbidden actual_id rest else [x] (*le rest n'est pas prit en compte dans la fct, on fait une boucle sur la meme chose x sera toujours là*)
 
@@ -60,3 +60,30 @@ let find_node_path arc_path =
     | Some qqchose -> match qqchose with
         | [] -> None
         | x::_ -> Some (x.src :: (List.map (fun arc -> arc.tgt) qqchose))
+
+
+let find_all_node_paths gr id1 id2 =
+  let rec aux current_path forbidden actual_id accu =
+    if actual_id = id2 then (List.rev (actual_id :: current_path)) :: accu
+    else
+      let voisins = out_arcs gr actual_id in 
+      List.fold_left (fun current_accu arc -> if List.mem arc.tgt forbidden then current_accu
+      else 
+        aux (actual_id :: current_path) (actual_id :: forbidden) arc.tgt current_accu)
+    accu voisins
+
+      in aux [] [] id1 []   
+
+let find_min_paths gr id1 id2 =
+  let rec aux current_path current_min forbidden actual_id accu =
+    if actual_id = id2 then 
+      let final_path = (List.rev (actual_id :: current_path)) in (final_path, current_min):: accu
+    else
+      let voisins = out_arcs gr actual_id in 
+      List.fold_left (fun current_accu arc -> if List.mem arc.tgt forbidden then current_accu
+      else 
+        let new_min= min current_min arc.lbl in
+        aux (actual_id :: current_path) new_min (actual_id :: forbidden) arc.tgt current_accu)
+    accu voisins
+
+      in aux [] max_int [] id1 []   
