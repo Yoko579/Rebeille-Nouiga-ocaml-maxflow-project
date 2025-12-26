@@ -96,6 +96,8 @@ let () =
   export graph_test_export_ford_fulkerson "test/graph_test_export_ford_fulkerson.dot";
   Printf.printf "[TEST EXPORT FULKERSON] Graph exported to test/graph_test_export_ford_fulkerson.dot\n";
 
+  let propre = residual_to_original int_graph final_graph in 
+  export propre "test/solution_Fulkerson.dot"; 
   
   (* Rewrite the graph that has been read. *)
   let () = write_file outfile graph in
