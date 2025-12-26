@@ -1,8 +1,9 @@
 open Gfile
 open Tools 
+open Path
 open Fulkerson
 
-    
+
 let () =
 
   (* Check the number of command-line arguments *)
@@ -10,10 +11,10 @@ let () =
     begin
       Printf.printf
         "\n ✻  Usage: %s infile source sink outfile\n\n%s%!" Sys.argv.(0)
-        ("      infile  : input file containing a graph\n" ^
-         "      source  : identifier of the source vertex (used by the ford-fulkerson algorithm)\n" ^
-         "      sink    : identifier of the sink vertex (ditto)\n" ^
-         "      outfile : output file in which the result should be written.\n\n") ;
+        ("    🟄  infile  : input file containing a graph\n" ^
+         "    🟄  source  : identifier of the source vertex (used by the ford-fulkerson algorithm)\n" ^
+         "    🟄  sink    : identifier of the sink vertex (ditto)\n" ^
+         "    🟄  outfile : output file in which the result should be written.\n\n") ;
       exit 0
     end ;
 
@@ -30,56 +31,73 @@ let () =
 
   (* Open file *)
   let graph = from_file infile in
+  let int_graph = gmap graph int_of_string in
+  
+  (* __________TESTS TOOLS.ML __________ *)
+  
+  (* Test clone_nodes and export *)
+  let graph_test_clone_nodes = clone_nodes graph in
+  Printf.printf "[TEST CLONE_NODES] All nodes of the graph have been cloned into a new graph.\n";
+
+  export graph_test_clone_nodes "test/graph_test_export_clone_nodes.dot";
+  Printf.printf "[TEST EXPORT CLONE_NODES] Graph exported to graph_test_export_clone_nodes.dot\n";
+
+  (* Test gmap and export *)
+  let graphe_test_gmap = gmap graph (fun x -> x ^ "a") in
+  Printf.printf "[TEST GMAP & CLONE_NODES] All arc are concatenate with 'a'.\n";
+
+  export graphe_test_gmap "test/graph_test_export_gmap.dot";
+  Printf.printf "[TEST EXPORT GMAP] Graph exported to graph_test_export_gmap.dot\n";
+  
+  (* Test add_arc and export *)
+  let graph_test_add_arc_1 = add_arc (gmap graph (int_of_string)) 1 2 10 in
+  Printf.printf "[TEST ADD_ARC] Arc 1 -> 2 's label passed from non-existent to '10'\n";
+
+  let graph_test_export_add_arc_1 = (gmap graph_test_add_arc_1 (string_of_int)) in
+  export graph_test_export_add_arc_1 "test/graph_test_export_add_arc_1.dot";
+  Printf.printf "[TEST EXPORT ADD_ARC] Graph exported to graph_test_export_add_arc_1.dot\n";
+
+
+  let graph_test_add_arc_2 = add_arc (gmap graph int_of_string) 3 4 10 in
+  Printf.printf "[TEST ADD_ARC] Arc 3 -> 4 's label passed from '5' to '15'.\n";
+  
+  let graph_test_export_add_arc_2 = (gmap graph_test_add_arc_2 string_of_int) in
+  export graph_test_export_add_arc_2 "test/graph_test_export_add_arc_2.dot";
+  Printf.printf "[TEST EXPORT ADD_ARC] Graph exported to graph_test_export_add_arc_2.dot\n";
+
+  (* __________TESTS PATH.ML __________ *)
+
+  (* Test find_path *)
+  let path_test = find_path int_graph [] 0 5 in
+  Printf.printf "[TEST PATH] Path from 0 to 5 with no initial constraint: %s\n" (path2s path_test);
+  let path_test = find_path int_graph [2; 4] 0 5 in
+  Printf.printf "[TEST PATH] Path from 0 to 5 with nodes 2 and 4 forbidden: %s\n" (path2s path_test);
+
+  (* __________TESTS FULKERSON.ML __________ *)
+
+  (* Test min_capacity *)
+  let example_path = [0; 3; 1; 5] in
+  let min_cap = min_capacity int_graph example_path in
+  Printf.printf "[TEST MIN_CAPACITY] Minimum capacity along path %s is %d.\n" (path2s (Some example_path)) min_cap;
+
+  (* Test update_residual and export *)
+  let updated_graph = update_residual int_graph example_path min_cap in
+  Printf.printf "[TEST UPDATE_RESIDUAL] Updated graph after pushing flow %d along path %s:\n" min_cap (path2s (Some example_path));
+
+  let graph_test_export_update_residual = gmap updated_graph string_of_int in
+  export graph_test_export_update_residual "test/graph_test_export_update_residual.dot";
+  Printf.printf "[TEST EXPORT UPDATE_RESIDUAL] Graph exported to graph_test_export_update_residual.dot\n";
+
+  (* Test Ford-Fulkerson Algorithm and export *)
+  let (max_flow, final_graph) = ford_fulkerson int_graph _source _sink in
+  Printf.printf "[TEST FULKERSON] Maximum flow from %d to %d: %d\n" _source _sink max_flow;
+
+  let graph_test_export_ford_fulkerson = gmap final_graph string_of_int in
+  export graph_test_export_ford_fulkerson "test/graph_test_export_ford_fulkerson.dot";
+  Printf.printf "[TEST EXPORT FULKERSON] Graph exported to test/graph_test_export_ford_fulkerson.dot\n";
 
   
-  (* __________TESTS __________ *)
-  
-  (* Test gmap and implicitly clone_nodes *)
-  let graphe_test_gmap = gmap graph (fun x -> x) in
-  Printf.printf "All arc are concatenate with 'a'.\n";
-  
-  (* Test export *)
-  export graphe_test_gmap "graphe_test_gmap.dot";
-  Printf.printf "Graph exported to graphe_test_gmap.dot\n";
-  
-  (* Test add_arc *)
-  let graph_test_add_arc = add_arc (gmap graph (int_of_string)) 1 2 10 in
-  Printf.printf "Arc 1 -> 2 with label 10 added.\n";
-
-  let graph_test_export_add_arc = (gmap graph_test_add_arc (string_of_int)) in
-  export graph_test_export_add_arc "graph_test_export_add_arc.dot";
-
-  (*Test find_path*)
-  let path_test = find_arc_path (gmap graph (int_of_string)) [] 0 10 in
-  Printf.printf "%s\n%!" (path2s (find_node_path path_test));
-
-
-  let all_paths =find_all_node_paths(gmap graph (int_of_string)) 0 10 in 
-  Printf.printf "%d chemin(s) trouvé(s)\n%!" (List.length all_paths);
-
-  List.iter (fun p -> Printf.printf "- %s\n%!" (path2s(Some p))) all_paths;
-  (* Rewrite the graph that has been read. *)
-
-  let all_paths_with_min = find_min_paths(gmap graph (int_of_string)) 0 10 in 
-  Printf.printf "%d chemin(s) trouvé(s)\n%!" (List.length all_paths_with_min);
-
-  List.iter (fun (p, f) -> Printf.printf "- %s pour valeur %d \n%!" (path2s(Some p)) f) all_paths_with_min;
   (* Rewrite the graph that has been read. *)
   let () = write_file outfile graph in
 
   ()
-
-  
-
-
-(*
-Commandes terminal:
-
-Convert graph to schema:
-dot -Tsvg graphe_test_gmap.dot > sortie.svg
-
-./ftest.exe graphs/graph1.txt 0 2 output_graph.txt
-
-To activate debugging:
-export OCAMLRUNPARAM="b"
-*)
