@@ -28,5 +28,5 @@ clean:
 	rm -f *.exe
 	dune clean
 # 	Added by students
-	rm -rf test/*
+	rm -rf tests/*
 

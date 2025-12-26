@@ -1,4 +1,5 @@
 open Graph
+open Tools
 open Path
 
 
@@ -49,6 +50,7 @@ let ford_fulkerson gr source sink =
       aux g (max_flow + flow)
   in
   aux gr 0
+
 
   let residual_to_original original_graph residual_graph =
     let base = gmap (clone_nodes original_graph) (fun _ -> "") in 
