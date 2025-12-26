@@ -49,3 +49,13 @@ let ford_fulkerson gr source sink =
       aux g (max_flow + flow)
   in
   aux gr 0
+
+  let residual_to_original original_graph residual_graph =
+    let base = gmap (clone_nodes original_graph) (fun _ -> "") in 
+    e_fold original_graph (fun acc_graph arc_orig -> 
+      match find_arc residual_graph arc_orig.src arc_orig.tgt with
+     | None -> new_arc acc_graph { arc_orig with lbl = "0/"^ (string_of_int arc_orig.lbl) }
+     | Some arc_res -> let flow = arc_orig.lbl - arc_res.lbl in 
+      let label = (string_of_int flow)^"/"^ (string_of_int arc_orig.lbl) in 
+      new_arc acc_graph{ arc_orig with lbl = label}
+      ) base
