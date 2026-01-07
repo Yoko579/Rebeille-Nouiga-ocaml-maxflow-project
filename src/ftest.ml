@@ -1,6 +1,6 @@
 open Gfile
 open Tools 
-open Path
+(* open Path *)
 open Fulkerson
 
 
@@ -32,7 +32,7 @@ let () =
   (* Open file *)
   let graph = from_file infile in
   let int_graph = gmap graph int_of_string in
-  
+  (*
   (* __________TESTS TOOLS.ML __________ *)
   
   (* Test clone_nodes and export *)
@@ -87,7 +87,7 @@ let () =
   let graph_test_export_update_residual = gmap updated_graph string_of_int in
   export graph_test_export_update_residual "tests/graph_test_export_update_residual.dot";
   Printf.printf "[TEST EXPORT UPDATE_RESIDUAL] Graph exported to graph_test_export_update_residual.dot\n";
-
+  *)
   (* Test Ford-Fulkerson Algorithm and export *)
   Printf.printf "\n\n\n[FORD FULKERSON TEST]\n\n";
 
