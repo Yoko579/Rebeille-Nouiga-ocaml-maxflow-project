@@ -59,5 +59,5 @@ let ford_fulkerson gr source sink =
      | None -> new_arc acc_graph { arc_orig with lbl = "0/"^ (string_of_int arc_orig.lbl) }
      | Some arc_res -> let flow = arc_orig.lbl - arc_res.lbl in 
       let label = (string_of_int flow)^"/"^ (string_of_int arc_orig.lbl) in 
-      new_arc acc_graph{ arc_orig with lbl = label}
+      if flow > 0 then new_arc acc_graph{ arc_orig with lbl = label} else acc_graph
       ) base

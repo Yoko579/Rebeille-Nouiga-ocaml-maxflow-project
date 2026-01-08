@@ -41,7 +41,7 @@ The program:
 ___________________________________________________________
 Tests:
 
-Several tests are executed automatically in ftest.ml to validate each part of the project:
+Several tests are executed in ftest.ml to validate each part of the project:
 
 - Tools.ml
   - clone_nodes: verifies that all nodes are correctly copied
@@ -93,3 +93,43 @@ make clean
 Activate OCaml debugging:
 export OCAMLRUNPARAM="b"
 ___________________________________________________________
+
+Money Sharing problem:
+
+Entry datas:
+
+- The names list of all the persons.
+e.g. names = [""; ""; "John"; "Kate"; "Ann"];
+
+- The list of the amount paid per person.
+e.g. paid = [0.; 0.; 40.; 10.; 10.];
+
+- The differences list between the amount paid by each person and the due per person.
+e.g. diffs = [20; -10; -10];
+
+The algorithm:
+
+diffs function:
+- Calculate the total amount paid.
+- Calculate how much money each person should have paid.
+- Calculate the difference between the amount paid by each person and the due per person and put them in a list.
+
+graph_of_names function:
+- Create a graph with one node for each person and add a source (id=0) and a sink (id=1).
+- For every pair of distinct persons, add a directed edge from one person to the other with infinite capacity (this represents the possibility of transferring any amount of money between them).
+- For each person:
+    - If their difference is positive (they paid more than their share), add an edge from the person’s node to the sink with capacity equal to the difference (the amount they should receive).
+    - If their difference is negative (they paid less than their share), add an edge from the source to the person’s node with capacity equal to the absolute value of the difference (the amount they owe).
+    - If the difference is zero, don't add any edge.
+
+Fulkerson function:
+- Run the Ford–Fulkerson algorithm from the source to the sink.
+
+Interpretation:
+- A flow from person A to person B corresponds to A paying B that amount.
+- The set of transfers obtained ensures that everyone ends up having paid exactly the same total amount.
+
+
+In terminal:
+./ftest.exe graphs/graph1.txt 0 5 tests/output_graph.txt (or whatever)
+dot -Tsvg tests/solution_graph_money_sharing.dot > tests/solution_graph_money_sharing.svg

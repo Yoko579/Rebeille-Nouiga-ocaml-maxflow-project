@@ -2,6 +2,7 @@ open Gfile
 open Tools 
 (* open Path *)
 open Fulkerson
+open Moneysharing
 
 
 let () =
@@ -105,6 +106,27 @@ let () =
   export graph "tests/original_graph.dot";
 
   Printf.printf "\n[INFO] Original graph exported to tests/original_graph.dot\n[INFO] Final graph exported to tests/solution_fulkerson.dot\n\n";
+
+
+  (* Test Money Sharing problem *)
+
+  let names = ["John"; "Kate"; "Ann"; "Bonoru"] in
+  let paid = [105.; 13.; 50.; 100.]; in
+
+  (* let names = ["John"; "Kate"; "Ann"] in
+  let paid = [40.; 10.; 10.]; in *)
+
+  let diffs = diffs_list paid in
+
+  let person_graph = graph_of_names names diffs in
+  let int_person_graph = gmap person_graph int_of_float in
+
+  let (max_flow, residual_graph_money_sharing) = ford_fulkerson (int_person_graph) 0 1 in
+  Printf.printf "[TEST MONEY SHARING] Maximum flow from source to sink: %d\n" max_flow;
+  
+  let solution_graph_money_sharing = residual_to_original int_person_graph residual_graph_money_sharing in 
+  export solution_graph_money_sharing "tests/solution_graph_money_sharing.dot"; 
+  Printf.printf "[TEST EXPORT MONEY SHARING] Final graph exported to tests/solution_graph_money_sharing.dot\n";
 
 
   (* Rewrite the graph that has been read. *)

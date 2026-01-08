@@ -26,7 +26,5 @@ demo: build
 clean:
 	find -L . -name "*~" -delete
 	rm -f *.exe
-	dune clean
-# 	Added by students
 	rm -rf tests/*
-
+	dune clean
