@@ -110,11 +110,11 @@ let () =
 
   (* Test Money Sharing problem *)
 
-  let names = ["John"; "Kate"; "Ann"; "Bonoru"] in
-  let paid = [105.; 13.; 50.; 100.]; in
+  (* let names = ["John"; "Kate"; "Ann"; "Bonoru"] in
+  let paid = [105.; 13.; 50.; 100.]; in *)
 
-  (* let names = ["John"; "Kate"; "Ann"] in
-  let paid = [40.; 10.; 10.]; in *)
+  let names = ["John"; "Kate"; "Ann"] in
+  let paid = [40.; 10.; 10.]; in
 
   let diffs = diffs_list paid in
 
@@ -124,7 +124,7 @@ let () =
   let (max_flow, residual_graph_money_sharing) = ford_fulkerson (int_person_graph) 0 1 in
   Printf.printf "[TEST MONEY SHARING] Maximum flow from source to sink: %d\n" max_flow;
   
-  let solution_graph_money_sharing = residual_to_original int_person_graph residual_graph_money_sharing in 
+  let solution_graph_money_sharing = residual_to_original_money_sharing int_person_graph residual_graph_money_sharing in 
   export solution_graph_money_sharing "tests/solution_graph_money_sharing.dot"; 
   Printf.printf "[TEST EXPORT MONEY SHARING] Final graph exported to tests/solution_graph_money_sharing.dot\n";
 
